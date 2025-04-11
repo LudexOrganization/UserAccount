@@ -1,12 +1,20 @@
-import express from "express";
+import dotenv from 'dotenv';
+import app from './app';
+import AppDataSource from './config/mysql.config';
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+// .env 환경변수 사용 setting
+dotenv.config();
 
-app.get("/", (req, res) => {
-    res.send("Hello from TypeScript Node.js server!");
-});
+const PORT = process.env.PORT;
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// DB 연결
+AppDataSource.initialize()
+    .then((): void => {
+        console.log('📦 DB connected');
+        // 서버 실행
+        app.listen(PORT, () : void => {
+            console.log(`UserAccount service running on port ${PORT}`);
+        });
+    })
+    .catch((error) => console.error('DB 연결 실패:', error));
+
